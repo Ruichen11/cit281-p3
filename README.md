@@ -50,14 +50,17 @@ module.exports = {
 ```
 4. coinCOunt(...coinage)
 - Calls and returns the result of valueFromArray() function, which will be the value of all coin objects with the coinage array function parameter
+
 ```
 function coinCount(...coinage) {
   return valueFromArray(coinage);
 }
 console.log("{}", coinCount({denom: 5, count: 3}));
+
 ```
 
 5. Web server code
+
 ```
 const fs = require("fs");
 const fastify = require("fastify")();
@@ -78,6 +81,9 @@ fastify.get("/", (request, reply) => {
     }
   });
 });
+```
+
+```
 fastify.get("/coin", (request, reply) => {
   const { denom = 0, count = 0 } = request.query;
   const coinValue = coinCount({
@@ -91,6 +97,9 @@ fastify.get("/coin", (request, reply) => {
       `<h2>Value of ${count} of ${denom} is ${coinValue}</h2><br /><a href="/">Home</a>`
     );
 });
+```
+
+```
 fastify.get("/coins", (request, reply) => {
   let coinValue = 0;
   const coins = [
@@ -116,7 +125,9 @@ const { option } = request.query;
       `<h2>Option ${option} value is ${coinValue}</h2><br /><a href="/">Home</a>`
     );
 });
+```
 
+```
 // Start server and listen to requests using Fastify
 const listenIP = "localhost";
 const listenPort = 8080;
@@ -128,6 +139,7 @@ fastify.listen(listenPort, listenIP, (err, address) => {
   console.log(`Server listening on ${address}`);
 });
 ```
+
 
 ### What I learned:
 - Learned to use code module and update the "server" with my own code file using fastify package. the web page is able to test my own code. 
