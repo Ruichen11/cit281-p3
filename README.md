@@ -1,4 +1,4 @@
-# cit281-p3
+# CIT281 Project 3
 
 Purpose of this Project:
 - To gain experience interpreting functional description and specifications to complete an assignment 
@@ -16,7 +16,6 @@ Overview:
 - Returns true if the coin function parameter is a valid coin value of either 1,5,10,25,50, or 100
 - Must use the array indexOf() Method and !== Equality operator 
 ```
-// Validate coin denomination, note using type equality test
 function validDenomination(coin) {
   return [1, 5, 10, 25, 50, 100].indexOf(coin) !== -1;
 }
@@ -25,7 +24,6 @@ function validDenomination(coin) {
 - Returns the calculated value of a single coin object from the obj function parameter
 - Must use object deconstruction to create constant variables denom and count from the obj function parameter, using default object values of 0 for denom and count
 ```
-// Return coin values from object
 function valueFromCoinObject(obj) {
   const { denom = 0, count = 0 } = obj;
   return validDenomination(denom) ? denom * count : 0;
@@ -54,20 +52,14 @@ module.exports = {
 4. coinCOunt(...coinage)
 - Calls and returns the result of valueFromArray() function, which will be the value of all coin objects with the coinage array function parameter
 ```
-// Process coin objects, either as a single coin, or array of coins
-// Coin object properties consist of:
-// - denom: coin denomination (1, 5, 10, 25, 50, 100)
-// - count: number of coins
 function coinCount(...coinage) {
   return valueFromArray(coinage);
 }
-
 console.log("{}", coinCount({denom: 5, count: 3}));
 ```
 
 5. Web server code
 ```
-// Import module files
 const fs = require("fs");
 const fastify = require("fastify")();
 const { coinCount } = require("./p3-module.js");
