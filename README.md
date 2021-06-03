@@ -23,6 +23,7 @@ function validDenomination(coin) {
 2. ValueFromCoinObject(obj)
 - Returns the calculated value of a single coin object from the obj function parameter
 - Must use object deconstruction to create constant variables denom and count from the obj function parameter, using default object values of 0 for denom and count
+
 ```
 function valueFromCoinObject(obj) {
   const { denom = 0, count = 0 } = obj;
@@ -33,6 +34,7 @@ function valueFromCoinObject(obj) {
 - iterates through an array of coin objects and returns the final calculated value of all coin objects
 - Must use Array.reduce() method, and an arrow function with the Array.reduce() method
 - Must call valueFromCoinObject()
+
 ```
 function valueFromArray(arr) {
   return arr.reduce(
@@ -41,14 +43,11 @@ function valueFromArray(arr) {
     0
   );
 }
-
-
 module.exports = {
   coinCount,
 };
 
 ```
-
 4. coinCOunt(...coinage)
 - Calls and returns the result of valueFromArray() function, which will be the value of all coin objects with the coinage array function parameter
 ```
