@@ -1,37 +1,142 @@
-## Welcome to GitHub Pages
+# cit281-p3
 
-You can use the [editor on GitHub](https://github.com/Ruichen11/cit281-p3/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+Purpose of this Project:
+- To gain experience interpreting functional description and specifications to complete an assignment 
+- Practice refacotring using modern JS syntax 
+- Practice creating and using code modules 
+- Gain expeirence using Fastify with the GET verb, routes, and query parameters
+- Gain experience loading a file and using as a web page 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Overview:
+- Create a "coinage" code module that is capable of calculating the total value of coin objects. 
 
-### Markdown
+### Project Tasks:
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+1. Valid Denomination(Coin)
+- Returns true if the coin function parameter is a valid coin value of either 1,5,10,25,50, or 100
+- Must use the array indexOf() Method and !== Equality operator 
+```
+// Validate coin denomination, note using type equality test
+function validDenomination(coin) {
+  return [1, 5, 10, 25, 50, 100].indexOf(coin) !== -1;
+}
+```
+2. ValueFromCoinObject(obj)
+- Returns the calculated value of a single coin object from the obj function parameter
+- Must use object deconstruction to create constant variables denom and count from the obj function parameter, using default object values of 0 for denom and count
+```
+// Return coin values from object
+function valueFromCoinObject(obj) {
+  const { denom = 0, count = 0 } = obj;
+  return validDenomination(denom) ? denom * count : 0;
+}
+```
+3. valueFromArray(arr)
+- iterates through an array of coin objects and returns the final calculated value of all coin objects
+- Must use Array.reduce() method, and an arrow function with the Array.reduce() method
+- Must call valueFromCoinObject()
+```
+function valueFromArray(arr) {
+  return arr.reduce(
+    (acc, val) =>
+      Array.isArray(val) ? valueFromArray(val) : acc + valueFromCoinObject(val),
+    0
+  );
+}
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
+module.exports = {
+  coinCount,
+};
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+4. coinCOunt(...coinage)
+- Calls and returns the result of valueFromArray() function, which will be the value of all coin objects with the coinage array function parameter
+```
+// Process coin objects, either as a single coin, or array of coins
+// Coin object properties consist of:
+// - denom: coin denomination (1, 5, 10, 25, 50, 100)
+// - count: number of coins
+function coinCount(...coinage) {
+  return valueFromArray(coinage);
+}
 
-### Jekyll Themes
+console.log("{}", coinCount({denom: 5, count: 3}));
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Ruichen11/cit281-p3/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+5. Web server code
+```
+// Import module files
+const fs = require("fs");
+const fastify = require("fastify")();
+const { coinCount } = require("./p3-module.js");
 
-### Support or Contact
+fastify.get("/", (request, reply) => {
+  fs.readFile(`${__dirname}/index.html`, (err, data) => {
+    if (err) {
+      reply
+        .code(500)
+        .header("Content-Type", "text/html; charset=utf-8")
+        .send("<h1>Server error.</h1>");
+    } else {
+      reply
+        .code(200)
+        .header("Content-Type", "text/html; charset=utf-8")
+        .send(data);
+    }
+  });
+});
+fastify.get("/coin", (request, reply) => {
+  const { denom = 0, count = 0 } = request.query;
+  const coinValue = coinCount({
+    denom: parseInt(denom),
+    count: parseInt(count),
+  });
+  reply
+    .code(200)
+    .header("Content-Type", "text/html; charset=utf-8")
+    .send(
+      `<h2>Value of ${count} of ${denom} is ${coinValue}</h2><br /><a href="/">Home</a>`
+    );
+});
+fastify.get("/coins", (request, reply) => {
+  let coinValue = 0;
+  const coins = [
+    { denom: 25, count: 2 },
+    { denom: 1, count: 7 },
+  ];
+const { option } = request.query;
+  switch (option) {
+    case "1":
+      coinValue = coinCount({ denom: 5, count: 3 }, { denom: 10, count: 2 });
+      break;
+    case "2":
+      coinValue = coinCount(...coins);
+      break;
+    case "3":
+      coinValue = coinCount(coins);
+      break;
+  }
+  reply
+    .code(200)
+    .header("Content-Type", "text/html; charset=utf-8")
+    .send(
+      `<h2>Option ${option} value is ${coinValue}</h2><br /><a href="/">Home</a>`
+    );
+});
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+// Start server and listen to requests using Fastify
+const listenIP = "localhost";
+const listenPort = 8080;
+fastify.listen(listenPort, listenIP, (err, address) => {
+  if (err) {
+    console.log(err);
+    process.exit(1);
+  }
+  console.log(`Server listening on ${address}`);
+});
+```
+
+### What I learned:
+- Learned to use code module and update the "server" with my own code file using fastify package. the web page is able to test my own code. 
